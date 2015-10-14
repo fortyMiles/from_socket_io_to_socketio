@@ -52,9 +52,10 @@ struct sockaddr_in  {
 ```
 
 >> code snippet.
+
+
 ```c
 /* The Code Snippet of Client Side */
-
 char *host = argv[1];
 int port = atoi(argv[2]);
 clinetdf = Open_cliented(host, port);
@@ -69,6 +70,7 @@ while(Fgets(buf, MAXLINE, stdin)!=NULL){
 Close(clientfd);
 ```
 
+Server Side
 ```
 /* The Code Snippet of Server Side */
 while (1) {
