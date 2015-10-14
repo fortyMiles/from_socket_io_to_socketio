@@ -190,7 +190,8 @@ io.on('connection', function(socket){
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   });
-});```
+});
+```
 
 ### Reference
 (1). CSAPP[Chapter 11, Network Programming, Computer Systems: A porgrammer's Perspective, Randal E. Bryant and David R. O'Hallaron, Carnegie Mellon University](http://csapp.cs.cmu.edu/)
