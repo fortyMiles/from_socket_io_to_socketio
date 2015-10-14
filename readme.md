@@ -107,7 +107,6 @@ The maintenance and coordination of these two connections introduces significant
 *Simply put, HTTP wasn't designed for real-time, full-duplex communication*
 
 >> Short Polling
-
 ```
 while true:
 	C ==> Is there any cake?
@@ -159,4 +158,42 @@ Once established, WebSocket data frames can be sent back and forth between the c
 3	WebSocket makes real-time communication much more efficient. You can always use polling (and sometimes even streaming) over HTTP to receive notifications over HTTP. However, WebSocket saves bandwidth, CPU power, and latency. WebSocket is an innovation in performance.
 
 4	WebSocket is an underlying network protocol that enables you to build other standard protocols on top of it.
-(1). CSAPP
+
+#### What's the Socket io
+
+Uses the WebSocket portocol with polling as a fallback option, while providing the same interface, and simplify it.
+
+And provide more features, including broadcasting to mutiple sockets, storing data associtaed with each client, and asynchronous I/O.
+
+>>
+```html
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  var socket = io();
+  $('form').submit(function(){
+    socket.emit('chat message', $('#m').val());
+    $('#m').val('');
+    return false;
+  });
+</script>
+```
+
+```js
+io.on('connection', function(socket){
+  socket.on('chat message', function(msg){
+    console.log('message: ' + msg);
+  });
+});
+
+io.on('connection', function(socket){
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
+});```
+
+### Reference
+(1). CSAPP[Chapter 11, Network Programming, Computer Systems: A porgrammer's Perspective, Randal E. Bryant and David R. O'Hallaron, Carnegie Mellon University](http://csapp.cs.cmu.edu/)
+(2). Stackoverflow [What's the difference with Websocket and socketio](http://stackoverflow.com/questions/10112178/differences-between-socket-io-and-websockets)
+(3). Wikipade [socket.io](https://en.wikipedia.org/wiki/Socket.IO)
+(4). Websocket Offical Site [A Quantum Leap in Scalability for the Web](https://www.websocket.org/quantum.html)
