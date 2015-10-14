@@ -194,7 +194,10 @@ io.on('connection', function(socket){
 ```
 
 ### Reference
-(1). CSAPP[Chapter 11, Network Programming, Computer Systems: A porgrammer's Perspective, Randal E. Bryant and David R. O'Hallaron, Carnegie Mellon University](http://csapp.cs.cmu.edu/)
-(2). Stackoverflow [What's the difference with Websocket and socketio](http://stackoverflow.com/questions/10112178/differences-between-socket-io-and-websockets)
-(3). Wikipade [socket.io](https://en.wikipedia.org/wiki/Socket.IO)
-(4). Websocket Offical Site [A Quantum Leap in Scalability for the Web](https://www.websocket.org/quantum.html)
+[1]. CSAPP[Chapter 11, Network Programming, Computer Systems: A porgrammer's Perspective, Randal E. Bryant and David R. O'Hallaron, Carnegie Mellon University](http://csapp.cs.cmu.edu/)
+
+[2]. Stackoverflow [What's the difference with Websocket and socketio](http://stackoverflow.com/questions/10112178/differences-between-socket-io-and-websockets)
+
+[3]. Wikipade [socket.io](https://en.wikipedia.org/wiki/Socket.IO)
+
+[4]. Websocket Offical Site [A Quantum Leap in Scalability for the Web](https://www.websocket.org/quantum.html)
