@@ -22,7 +22,7 @@ With this model, an application consists of a *server* process and one or omre *
 
 To a host, a network is just another I/O device that servers as a source and sink for data.
 
-### The sockets Interface
+### 1 The sockets Interface
 
 The *sockets interfaces* is a set of functions that are userd in conjunction with the Unix I/O functions to build network applications. It has been implements on the most modern systems, including all Unix variants, Windows.
 
@@ -36,5 +36,125 @@ openClent	| socket	|							|	socket	|	openListen
 			|rio readlineb|<------------------------|rio written | awaiting
 			| close		|-- -- -- EOF -- -- -- ---->|rio readlineb| next client
 
+```c
+/* Generic socket address structure (for connect, bind, and accept) */
+struct sockaddr {
+    unsigned short  sa_family;   /* Protocol family */
+    char            sa_data[14]; /* Address data.  */
+};
+/* Internet-style socket address structure */
+struct sockaddr_in  {
+    unsigned short  sin_family;  /* Address family (always AF_INET) */
+    unsigned short  sin_port;    /* Port number in network byte order */
+    struct in_addr  sin_addr;    /* IP address in network byte order */
+    unsigned char   sin_zero[8]; /* Pad to sizeof(struct sockaddr) */
+￼};
+```
 
+>> code snippet.
+```c
+/* The Code Snippet of Client Side */
+
+char *host = argv[1];
+int port = atoi(argv[2]);
+clinetdf = Open_cliented(host, port);
+Rio_readlinitb(&rio, clinented);
+
+while(Fgets(buf, MAXLINE, stdin)!=NULL){
+	Rio_written(cliented, buf, strlen(buf));
+	Rio_readlineb(&rio, buf, MAXLINE);
+	Fgets(buf, stdout);
+}
+
+Close(clientfd);
+```
+
+```
+/* The Code Snippet of Server Side */
+while (1) {
+	clientlen = sizeof(clientaddr);
+	connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);
+	 /* Determine the domain name and IP address of the client */
+	 hp = Gethostbyaddr((const char *)&clientaddr.sin_addr.s_addr,
+	                        sizeof(clientaddr.sin_addr.s_addr), AF_INET);
+	 haddrp = inet_ntoa(clientaddr.sin_addr);
+	 printf("server connected to %s (%s)\n", hp->h_name, haddrp);
+	 echo(connfd);
+	 Close(connfd);
+}
+```
+
+### 2 Web Socket (The socket for Web)
+
+#### 2.1 Polling, Long Polling
+
+What's polling: check the status of deveices or network, especially as part of a repeaed cycle.
+
+If you want to get the most up-to-date "real-time" information, you can constantly refresh that page manually, but that's obviously not a great solution.
+
+With *polling*, the browser sends HTTP request at regular intervals and immediatedly receives a response. It is a good solution if the exact interval of message delivery is know. However, real-time data is often not that predictable, making unnecessary requests inevitable and as a result, many connections are opened and closed needlessly in low-message-rate situations.
+
+With *Long-polling*, the browser sends a requests to the server and the server keeps the requeset open for a set period. If a notification is received within that period, a response containing the message is sent to the client. If a notification is not received within the set time period, the server sends a response to terminate the open request.
+
+Long polling is difficult to implement well.
+
+Ultimately, all of these methods for providing real-time data involve HTTP request and response headers, which contain lots of additional, unnecessary header data and introduce latency. On top of that, full-duplex connectivity requires more than just the downstream connection from server to client. In an effort to simulate full-duplex communication over half-duplex HTTP, many of today's solutions use two connections: one for the downstream and one for the upstream.
+
+The maintenance and coordination of these two connections introduces significant overhead in terms of resource consumption and adds lots of complexity.
+
+*Simply put, HTTP wasn't designed for real-time, full-duplex communication*
+
+>> Short Polling
+
+```
+while true:
+	C ==> Is there any cake?
+	S ==> No, wait
+	C ==> Is there any cake?
+	S ==> No, wait
+	C ==> Is there any cake?
+	S ==> Yes, there is one!
+	C ==> Is there any cake?
+	...
+```
+
+>> Long Polling:
+```
+	C ==> Is there any cake?
+	(waiting for seconds and cook cook a new cake)
+	S ==> Yeah, there is one.
+```
+>> eat up your resources
+
+
+With polling it makes unnecessary requests and, as a result, many connnections are opened and closed needlessly in low-message-rate situation. 
+
+Web Sockets remove the overhead and dramatically reduce complexity.
+
+#### 2.2 The Websocket is coming
+
+To establish a WebSocket connection, the client and server upgrade from the HTTP protocol to the WebSocket protocol during their initial handshake, as shown in the following example:
+
+```
+GET /text HTTP/1.1\r\n 
+Upgrade: WebSocket\r\n 
+Connection: Upgrade\r\n 
+Host: www.websocket.org\r\n 
+…\r\n 
+HTTP/1.1 101 WebSocket Protocol Handshake\r\n 
+Upgrade: WebSocket\r\n 
+Connection: Upgrade\r\n …\r\n
+```
+Once established, WebSocket data frames can be sent back and forth between the client and the server in full-duplex mode. Both text and binary frames can be sent full-duplex, in either direction at the same time.
+
+
+#### The Advantage of WebSocket
+
+1	WebSocket is a naturally *full-duplex*, bidirectional, single-socket connection. With WebSocket, your HTTP request becomes a single request to open a WebSocket connection and reuses the same connection from the client to the server, and the server to the client.
+
+2	WebSocket reduces latency. For example, unlike polling, WebSocket makes a single request. The server does not need to wait for a request from the client. Similarly, the client can send messages to the server at any time. This single request greatly reduces latency over polling, which sends a request at intervals, regardless of whether messages are available.
+
+3	WebSocket makes real-time communication much more efficient. You can always use polling (and sometimes even streaming) over HTTP to receive notifications over HTTP. However, WebSocket saves bandwidth, CPU power, and latency. WebSocket is an innovation in performance.
+
+4	WebSocket is an underlying network protocol that enables you to build other standard protocols on top of it.
 (1). CSAPP
